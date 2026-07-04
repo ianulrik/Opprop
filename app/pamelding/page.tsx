@@ -1,44 +1,35 @@
 // app/pamelding/page.tsx
 // Public registration page (no login required).
 //
-// This is a Server Component (no "use client" at the top), so it runs
-// on the server. That lets us fetch the course list directly with
-// `await` before the page is sent to the browser.
-//
-// For now it just LISTS the courses. In the next step we add the
-// actual registration form on top of this.
+// Server Component: fetches the course list on the server, shows it,
+// and then renders the registration form (a client component) below it,
+// passing the courses in as a prop.
 
 import { createClient } from "@/lib/supabase/server";
+import PameldingSkjema from "./pameldingSkjema"; //bring in the form
 
 // The shape of one course, as returned by the public_active_courses() RPC.
-// (These names come straight from that function's SELECT.)
 type Course = {
   id: string;
   name: string;
   location: string;
-  weekday: number;        // a number (0–6), which is why we don't use it directly
-  start_time: string;     // e.g. "17:30:00"
-  start_date: string;     // e.g. "2026-01-15"
+  weekday: number;
+  start_time: string;
+  start_date: string;
   end_date: string;
   max_participants: number;
-  spots_left: number;     // computed by the RPC; never below 0
+  spots_left: number;
 };
 
 // --- Small display helpers (Norwegian formatting) ---
 
-// Weekday derived from the start date. We compute it from the date itself
-// (rather than trusting the `weekday` number) so we never have to guess
-// whether 0 means Sunday or Monday. Splitting the "YYYY-MM-DD" string and
-// building the Date from its parts avoids any timezone shifting.
 function formatWeekday(dateStr: string): string {
   const [year, month, day] = dateStr.split("-").map(Number);
-  const date = new Date(year, month - 1, day); // local time, no UTC surprises
-  const weekday = date.toLocaleDateString("nb-NO", { weekday: "long" }); // "mandag"
-  // Capitalise the first letter since it starts a line in the UI.
+  const date = new Date(year, month - 1, day);
+  const weekday = date.toLocaleDateString("nb-NO", { weekday: "long" });
   return weekday.charAt(0).toUpperCase() + weekday.slice(1);
 }
 
-// "2026-01-15" -> "15. januar 2026"
 function formatDate(dateStr: string): string {
   const [year, month, day] = dateStr.split("-").map(Number);
   const date = new Date(year, month - 1, day);
@@ -49,7 +40,6 @@ function formatDate(dateStr: string): string {
   });
 }
 
-// "17:30:00" -> "17:30"
 function formatTime(timeStr: string): string {
   return timeStr.slice(0, 5);
 }
@@ -59,7 +49,6 @@ function formatTime(timeStr: string): string {
 export default async function PameldingPage() {
   const supabase = await createClient();
 
-  // The RPC returns a JSON array directly, so `data` IS our list of courses.
   const { data, error } = await supabase.rpc("public_active_courses");
   const courses = (data ?? []) as Course[];
 
@@ -84,7 +73,7 @@ export default async function PameldingPage() {
         </p>
       )}
 
-      {/* The list of courses */}
+      {/* The list of courses (informational) */}
       {courses.length > 0 && (
         <ul className="mt-8 space-y-4">
           {courses.map((course) => (
@@ -97,12 +86,9 @@ export default async function PameldingPage() {
               <p className="text-sm text-gray-600">
                 Oppstart {formatDate(course.start_date)}
               </p>
-
-              {/* Free spots, or waitlist when full */}
               <p className="mt-2 text-sm font-medium">
                 {course.spots_left > 0 ? (
                   <span className="text-green-700">
-                    {/* Singular/plural so the Norwegian reads correctly */}
                     {course.spots_left === 1
                       ? "1 ledig plass"
                       : `${course.spots_left} ledige plasser`}
@@ -115,6 +101,9 @@ export default async function PameldingPage() {
           ))}
         </ul>
       )}
+
+      {/* the registration form, shown whenever there are courses to pick */}
+      {courses.length > 0 && <PameldingSkjema courses={courses} />}
     </main>
   );
 }
