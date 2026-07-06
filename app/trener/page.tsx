@@ -1,5 +1,5 @@
 // app/trener/page.tsx
-// Trainer dashboard (lives at /trener).
+// Trainer dashboard (lives at / trener).
 //
 // Server Component: runs on the server, so it can read the logged-in
 // user and fetch data directly. The middleware already guarantees only
@@ -105,7 +105,7 @@ export default async function TrenerPage() {
       {courses.length > 0 && (
         <ul className="mt-8 space-y-4">
           {courses.map((course) => (
-            <li key={course.id}>
+            <li key={course.id}> 
               {/* Each course links to its attendance page (built later).
                   The link works now; the page will 404 until we build it. */}
               <Link
