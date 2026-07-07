@@ -102,31 +102,32 @@ export default function OppmoteListe({
                 {swimmer.first_name} {swimmer.last_name}
               </span>
 
-              {/* The two big tap targets */}
+              {/* The two big tap targets.
+                  IMPORTANT: each full class string is written out
+                  completely (not assembled from pieces), so Tailwind's
+                  build-time scanner sees them and generates the CSS. */}
               <div className="flex gap-2">
-                {/* Tilstede */}
+                {/* Til stede */}
                 <button
                   type="button"
                   onClick={() => setStatus(swimmer.id, "present")}
                   className={
-                    "rounded-lg px-5 py-4 text-base font-medium " +
-                    (swimmer.status === "present"
-                      ? "bg-green-600 text-white"
-                      : "bg-gray-100 text-gray-700 hover:bg-gray-200")
+                    swimmer.status === "present"
+                      ? "rounded-lg px-5 py-4 text-base font-medium bg-green-600 text-white"
+                      : "rounded-lg px-5 py-4 text-base font-medium bg-gray-100 text-gray-700 hover:bg-gray-200"
                   }
                 >
                   Til stede
                 </button>
 
-                {/* Ikke til stede */}
+                {/* Ikke til stede (Borte) */}
                 <button
                   type="button"
                   onClick={() => setStatus(swimmer.id, "absent")}
                   className={
-                    "rounded-lg px-5 py-4 text-base font-medium " +
-                    (swimmer.status === "absent"
-                      ? "bg-red-600 text-white"
-                      : "bg-gray-100 text-gray-700 hover:bg-gray-200")
+                    swimmer.status === "absent"
+                      ? "rounded-lg px-5 py-4 text-base font-medium bg-red-600 text-white"
+                      : "rounded-lg px-5 py-4 text-base font-medium bg-gray-100 text-gray-700 hover:bg-gray-200"
                   }
                 >
                   Borte

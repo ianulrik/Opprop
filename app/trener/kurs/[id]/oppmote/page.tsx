@@ -225,35 +225,6 @@ export default async function OppmotePage({
           {swimmers.length} svømmere påmeldt
         </p>
       )}
-
-      {/* A small count, handy for a quick headcount */}
-      {swimmers.length > 0 && (
-        <p className="mt-6 text-center text-sm text-gray-500">
-          {swimmers.length} svømmere påmeldt
-        </p>
-      )}
-
-      {swimmers.map((swimmer) => (
-            <li
-              key={swimmer.id}
-              className="rounded-xl border border-gray-200 p-4"
-            >
-              <span className="text-xl font-medium text-gray-900">
-                {swimmer.first_name} {swimmer.last_name}
-              </span>
-              {/* Temporary status readout — confirms we read the right
-                  status per session. Replaced by buttons in the next step. */}
-              <span className="ml-3 text-sm text-gray-500">
-                {swimmer.status === "present"
-                  ? "✓ Til stede"
-                  : swimmer.status === "absent"
-                  ? "✗ Ikke til stede"
-                  : swimmer.status === "excused"
-                  ? "– Gyldig fravær"
-                  : "(ikke registrert)"}
-              </span>
-            </li>
-          ))}
     </main>
   );
 }
