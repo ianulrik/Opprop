@@ -26,6 +26,7 @@ type EnrolledSwimmer = {
   id: string;
   first_name: string;
   last_name: string;
+  status: "present" | "absent" | "excused" | null;
 };
 
 function formatDate(dateStr: string): string {
