@@ -19,6 +19,15 @@ type Session = {
   session_date: string;
 };
 
+// One enrolled swimmer, as we fetch them for the attendance list.
+// We deliberately fetch only what the list needs — no health/sensitive
+// data here; that belongs on the swimmer profile page, not a poolside list.
+type EnrolledSwimmer = {
+  id: string;
+  first_name: string;
+  last_name: string;
+};
+
 function formatDate(dateStr: string): string {
   const [y, m, d] = dateStr.split("-").map(Number);
   const date = new Date(y, m - 1, d);
@@ -109,6 +118,24 @@ export default async function OppmotePage({
   const next =
     currentIndex < sessions.length - 1 ? sessions[currentIndex + 1] : null;
 
+    // Fetch the ACTIVE enrollments for this course, and pull each linked
+  // swimmer's name in the same query. The `swimmers ( ... )` part tells
+  // Supabase to follow the foreign key from enrollments to swimmers and
+  // include those columns — so we get names without a second query.
+  const { data: enrollmentsData } = await supabase
+    .from("enrollments")
+    .select("swimmers ( id, first_name, last_name )")
+    .eq("course_id", courseId)
+    .eq("status", "active");
+
+  // Each row looks like { swimmers: { id, first_name, last_name } }.
+  // We flatten it to a plain list of swimmers, drop any empty rows, and
+  // sort by first name so the list reads naturally at the poolside.
+  const swimmers: EnrolledSwimmer[] = (enrollmentsData ?? [])
+    .map((row) => row.swimmers as unknown as EnrolledSwimmer)
+    .filter(Boolean)
+    .sort((a, b) => a.first_name.localeCompare(b.first_name, "nb"));
+
   const basePath = `/trener/kurs/${courseId}/oppmote`;
 
   return (
@@ -160,10 +187,33 @@ export default async function OppmotePage({
         )}
       </div>
 
-      {/* Swimmers list goes here in the next step (bit 1b). */}
-      <p className="mt-8 text-center text-gray-400">
-        (Svømmerliste kommer i neste steg)
-      </p>
+      {/* Swimmer list. Big names, generous spacing — built for reading
+          and (soon) tapping at the poolside. Status buttons come next. */}
+      {swimmers.length === 0 ? (
+        <p className="mt-8 text-center text-gray-600">
+          Ingen aktive svømmere er påmeldt dette kurset ennå.
+        </p>
+      ) : (
+        <ul className="mt-8 space-y-3">
+          {swimmers.map((swimmer) => (
+            <li
+              key={swimmer.id}
+              className="rounded-xl border border-gray-200 p-4"
+            >
+              <span className="text-xl font-medium text-gray-900">
+                {swimmer.first_name} {swimmer.last_name}
+              </span>
+            </li>
+          ))}
+        </ul>
+      )}
+
+      {/* A small count, handy for a quick headcount */}
+      {swimmers.length > 0 && (
+        <p className="mt-6 text-center text-sm text-gray-500">
+          {swimmers.length} svømmere påmeldt
+        </p>
+      )}
     </main>
   );
 }
