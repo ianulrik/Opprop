@@ -11,6 +11,7 @@
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import OppmoteListe from "./oppmoteliste";
 
 type Session = {
   id: string;
@@ -78,7 +79,7 @@ export default async function OppmotePage({
   } = await supabase.auth.getUser();
   if (!user) redirect("/trener/login");
 
-  // Fetch the course. RLS ensures a trainer only gets their own course;
+  // Fetch the course. RLS (row-based security) ensures a trainer only gets their own course;
   // if it's not theirs (or doesn't exist), we get nothing -> 404.
   const { data: course } = await supabase
     .from("courses")
@@ -210,25 +211,19 @@ export default async function OppmotePage({
         )}
       </div>
 
-      {/* Swimmer list. Big names, generous spacing — built for reading
-          and (soon) tapping at the poolside. Status buttons come next. */}
+      {/* Interactive attendance list (client component) */}
       {swimmers.length === 0 ? (
         <p className="mt-8 text-center text-gray-600">
           Ingen aktive svømmere er påmeldt dette kurset ennå.
         </p>
       ) : (
-        <ul className="mt-8 space-y-3">
-          {swimmers.map((swimmer) => (
-            <li
-              key={swimmer.id}
-              className="rounded-xl border border-gray-200 p-4"
-            >
-              <span className="text-xl font-medium text-gray-900">
-                {swimmer.first_name} {swimmer.last_name}
-              </span>
-            </li>
-          ))}
-        </ul>
+        <OppmoteListe sessionId={selected.id} swimmers={swimmers} />
+      )}
+
+      {swimmers.length > 0 && (
+        <p className="mt-6 text-center text-sm text-gray-500">
+          {swimmers.length} svømmere påmeldt
+        </p>
       )}
 
       {/* A small count, handy for a quick headcount */}
