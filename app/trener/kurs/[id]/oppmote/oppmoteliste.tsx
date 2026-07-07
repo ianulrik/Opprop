@@ -104,7 +104,7 @@ export default function OppmoteListe({
 
               {/* The two big tap targets */}
               <div className="flex gap-2">
-                {/* Til stede */}
+                {/* Tilstede */}
                 <button
                   type="button"
                   onClick={() => setStatus(swimmer.id, "present")}
