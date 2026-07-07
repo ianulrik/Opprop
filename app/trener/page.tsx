@@ -90,6 +90,17 @@ export default async function TrenerPage() {
         {profile?.role === "admin" && " (administrator)"}
       </p>
 
+        {/* Logout. A tiny form that POSTs to the logout route. Using a form
+        (not a link) means logout only happens on a real click. */}
+        <form action="/trener/logout" method="post" className="mt-4">
+            <button
+                type="submit"
+                className="text-sm text-gray-500 underline hover:text-gray-700"
+            >
+                Logg ut
+            </button>
+        </form>
+
       {error && (
         <p className="mt-8 rounded-lg bg-red-50 p-4 text-red-700">
           Klarte ikke å hente kursene. Prøv igjen senere.
