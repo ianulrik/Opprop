@@ -129,13 +129,35 @@ export default async function OppmotePage({
     .eq("course_id", courseId)
     .eq("status", "active");
 
-  // Each row looks like { swimmers: { id, first_name, last_name } }.
-  // We flatten it to a plain list of swimmers, drop any empty rows, and
-  // sort by first name so the list reads naturally at the poolside.
-  const swimmers: EnrolledSwimmer[] = (enrollmentsData ?? [])
-    .map((row) => row.swimmers as unknown as EnrolledSwimmer)
+  // Build the base swimmer list (names only), sorted for the poolside.
+  const baseSwimmers = (enrollmentsData ?? [])
+    .map((row) => row.swimmers as unknown as {
+      id: string;
+      first_name: string;
+      last_name: string;
+    })
     .filter(Boolean)
     .sort((a, b) => a.first_name.localeCompare(b.first_name, "nb"));
+
+  // Fetch attendance already recorded for THIS session. Thanks to the
+  // unique(session_id, swimmer_id) constraint, there's at most one row
+  // per swimmer, so we can map swimmer_id -> status directly.
+  const { data: attendanceData } = await supabase
+    .from("attendance")
+    .select("swimmer_id, status")
+    .eq("session_id", selected.id);
+
+  // Turn that into a quick lookup: swimmer_id -> status.
+  const statusBySwimmer = new Map<string, "present" | "absent" | "excused">();
+  for (const row of attendanceData ?? []) {
+    statusBySwimmer.set(row.swimmer_id, row.status);
+  }
+
+  // Merge: each swimmer gets their recorded status, or null if none yet.
+  const swimmers: EnrolledSwimmer[] = baseSwimmers.map((s) => ({
+    ...s,
+    status: statusBySwimmer.get(s.id) ?? null,
+  }));
 
   const basePath = `/trener/kurs/${courseId}/oppmote`;
 
