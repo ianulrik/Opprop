@@ -79,7 +79,7 @@ export default async function OppmotePage({
   } = await supabase.auth.getUser();
   if (!user) redirect("/trener/login");
 
-  // Fetch the course. RLS ensures a trainer only gets their own course;
+  // Fetch the course. RLS (row-based security) ensures a trainer only gets their own course;
   // if it's not theirs (or doesn't exist), we get nothing -> 404.
   const { data: course } = await supabase
     .from("courses")
