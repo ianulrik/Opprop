@@ -245,9 +245,9 @@ export default async function OppmotePage({
                   status per session. Replaced by buttons in the next step. */}
               <span className="ml-3 text-sm text-gray-500">
                 {swimmer.status === "present"
-                  ? "✓ Til stede"
+                  ? "✓ Tilstede"
                   : swimmer.status === "absent"
-                  ? "✗ Ikke til stede"
+                  ? "✗ Ikke tilstede"
                   : swimmer.status === "excused"
                   ? "– Gyldig fravær"
                   : "(ikke registrert)"}
