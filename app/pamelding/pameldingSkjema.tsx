@@ -1,6 +1,4 @@
-// app/pamelding/PameldingSkjema.tsx
-// The public registration form (client component).
-//
+
 // "use client" means this runs in the browser, so it can react to
 // typing and handle form submission. It receives the course list as a
 // prop from the page, and submits via the public_enroll RPC.

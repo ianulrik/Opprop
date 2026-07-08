@@ -1,6 +1,3 @@
-// app/trener/kurs/[id]/oppmote/OppmoteListe.tsx
-// The interactive attendance list (client component).
-//
 // It receives the swimmers (with their already-recorded status for this
 // session) from the page, and lets the trainer tap to set each one to
 // "present" or "absent". Updates feel instant: we change the screen
@@ -57,7 +54,7 @@ export default function OppmoteListe({
       return next;
     });
 
-    // 2. SAVE in the background. upsert = insert, or update if a row for
+    //    SAVE in the background. upsert = insert, or update if a row for
     //    this (session_id, swimmer_id) already exists. The unique index
     //    on those two columns is what makes this safe — we never create
     //    duplicates, we just overwrite the status.
@@ -70,7 +67,7 @@ export default function OppmoteListe({
       { onConflict: "session_id,swimmer_id" }
     );
 
-    // 3. Done saving (whether it worked or not), so drop the saving mark.
+    //   Done saving (whether it worked or not), so drop the saving mark.
     setSaving((set) => {
       const next = new Set(set);
       next.delete(swimmerId);

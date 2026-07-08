@@ -1,6 +1,3 @@
-// app/trener/logout/route.ts
-// Logout route (lives at /trener/logout).
-//
 // This is a Route Handler, not a page — it performs an action and then
 // redirects, rather than rendering anything. Doing logout on the server
 // ensures the session COOKIE is properly cleared (a browser-only logout

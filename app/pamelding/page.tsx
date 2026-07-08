@@ -1,6 +1,4 @@
-// app/pamelding/page.tsx
-// Public registration page (no login required).
-//
+
 // Server Component: fetches the course list on the server, shows it,
 // and then renders the registration form (a client component) below it,
 // passing the courses in as a prop.
@@ -66,14 +64,14 @@ export default async function PameldingPage() {
         </p>
       )}
 
-      {/* If there are no active courses */}
+      
       {!error && courses.length === 0 && (
         <p className="mt-8 rounded-lg bg-gray-50 p-4 text-gray-600">
           Det er ingen aktive kurs akkurat nå. Kom gjerne tilbake senere.
         </p>
       )}
 
-      {/* The list of courses (informational) */}
+      {/* liste av kurs */}
       {courses.length > 0 && (
         <ul className="mt-8 space-y-4">
           {courses.map((course) => (

@@ -1,13 +1,3 @@
-// app/trener/login/page.tsx
-// Trainer login page (lives at /trener/login).
-//
-// "use client" because it's an interactive form (typing + submitting),
-// so it runs in the browser and uses the browser Supabase client.
-//
-// On success we send the user to /trener (the dashboard, built next).
-// Until that page exists you'll see a "404" after a correct login —
-// and that 404 is itself proof the login worked.
-
 "use client";
 
 import { useState } from "react";
@@ -29,8 +19,7 @@ export default function LoginPage() {
     setSubmitting(true);
 
     // Ask Supabase Auth to sign the user in with email + password.
-    // On success, the browser client stores the session in cookies,
-    // so later page loads know this trainer is logged in.
+    // On success, the browser client stores the session in cookies, so later page loads know this trainer is logged in.
     const { error } = await supabase.auth.signInWithPassword({
       email,
       password,
@@ -38,10 +27,10 @@ export default function LoginPage() {
 
     if (error) {
       setSubmitting(false);
-      // Supabase Auth returns English messages, so we translate the
-      // common ones to Norwegian for the user.
+      // Supabase Auth returns English messages, translate to norwagian
+      
       if (error.message === "Invalid login credentials") {
-        setErrorMsg("Feil e-post eller passord.");
+        setErrorMsg("Feil e-post eller passord. Prøv igjen.");
       } else if (error.message === "Email not confirmed") {
         setErrorMsg("E-posten er ikke bekreftet ennå.");
       } else {
@@ -50,9 +39,7 @@ export default function LoginPage() {
       return;
     }
 
-    // Success: go to the trainer dashboard.
-    // router.refresh() forces the server to re-read the new session
-    // cookie, so the next page renders as logged-in.
+    
     router.push("/trener");
     router.refresh();
   }

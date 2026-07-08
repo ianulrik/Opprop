@@ -1,6 +1,4 @@
-// app/trener/page.tsx
-// Trainer dashboard (lives at / trener).
-//
+
 // Server Component: runs on the server, so it can read the logged-in
 // user and fetch data directly. The middleware already guarantees only
 // logged-in users reach this page, but we still read the user here to
