@@ -22,10 +22,14 @@ type Swimmer = {
 export default function OppmoteListe({
   sessionId,
   swimmers: initialSwimmers,
+  recordedBy,
 }: {
   sessionId: string;
   swimmers: Swimmer[];
-}) {
+  recordedBy: string; // the logged-in trainer's id, for the audit trail
+})  
+
+{
   const supabase = createClient();
 
   // We keep the list in state so we can update it instantly on tap.
@@ -63,6 +67,8 @@ export default function OppmoteListe({
         session_id: sessionId,
         swimmer_id: swimmerId,
         status: newStatus,
+        recorded_by: recordedBy,
+        recorded_at: new Date().toISOString(),
       },
       { onConflict: "session_id,swimmer_id" }
     );

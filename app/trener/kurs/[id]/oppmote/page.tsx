@@ -221,6 +221,7 @@ export default async function OppmotePage({
           key={selected.id}
           sessionId={selected.id}
           swimmers={swimmers}
+          recordedBy={user.id}
         />
       )}
 
