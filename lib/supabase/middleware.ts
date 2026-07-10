@@ -1,6 +1,3 @@
-// lib/supabase/middleware.ts
-// Session-refresh helper for the middleware.
-//
 // This does two things on every matching request:
 //   1. Refreshes the Supabase session and writes the updated cookie,
 //      so a logged-in trainer doesn't get logged out mid-session.
