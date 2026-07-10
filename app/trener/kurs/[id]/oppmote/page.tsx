@@ -217,7 +217,11 @@ export default async function OppmotePage({
           Ingen aktive svømmere er påmeldt dette kurset ennå.
         </p>
       ) : (
-        <OppmoteListe sessionId={selected.id} swimmers={swimmers} />
+        <OppmoteListe
+          key={selected.id}
+          sessionId={selected.id}
+          swimmers={swimmers}
+        />
       )}
 
       {swimmers.length > 0 && (
