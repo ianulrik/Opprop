@@ -8,8 +8,7 @@
 import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 
-// The status values our app uses. (The DB enum also has "excused",
-// but this app only records these two.)
+// The status values our app uses. (bruker ikke excused)
 type Status = "present" | "absent";
 
 type Swimmer = {
