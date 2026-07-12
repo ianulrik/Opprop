@@ -6,7 +6,9 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
+
 
 // The status values our app uses. (bruker ikke excused)
 type Status = "present" | "absent";
@@ -100,9 +102,12 @@ export default function OppmoteListe({
             className="rounded-xl border border-gray-200 p-4"
           >
             <div className="flex items-center justify-between gap-3">
-              <span className="text-xl font-medium text-gray-900">
+              <Link
+                href={`/trener/svommer/${swimmer.id}`}
+                className="text-xl font-medium text-gray-900 hover:underline"
+              >
                 {swimmer.first_name} {swimmer.last_name}
-              </span>
+              </Link>
 
               {/* The two big tap targets.
                   IMPORTANT: each full class string is written out
