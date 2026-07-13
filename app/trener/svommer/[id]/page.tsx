@@ -91,8 +91,7 @@ export default async function SvommerPage({
   } = await supabase.auth.getUser();
   if (!user) return redirect("/trener/login");
 
-  // 1. The swimmer. RLS returns nothing if this trainer isn't allowed
-  //    to see them -> 404.
+  // 1. The swimmer. RLS returns nothing if this trainer isn't allowed to see them -> 404.
   const { data: swimmer } = await supabase
     .from("swimmers")
     .select(
