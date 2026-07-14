@@ -1,7 +1,6 @@
 
-// Server Component. Shows everything about one swimmer: base data,
-// guardian, health, GDPR, enrolled courses, and earned badges.
-//
+// Server Component. Shows everything about one swimmer: base data, guardian, health, GDPR, enrolled courses, and earned badges.
+
 // This page shows SENSITIVE data (health, contact info). RLS ensures
 // only the swimmer's trainer (or an admin) can load it — but be mindful
 // it's not a page to leave open on a poolside screen.
