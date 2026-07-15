@@ -17,7 +17,7 @@ type Swimmer = {
   id: string;
   first_name: string;
   last_name: string;
-  status: Status | "excused" | null; // may arrive as excused/null from the DB
+  status: Status | "excused" | null; // may arrive as excused/null from the database
 };
 
 export default function OppmoteListe({
