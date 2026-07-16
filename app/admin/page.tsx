@@ -8,6 +8,7 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import NyttKursSkjema from "./NyttKursSkjema";
 
 // One course row, with the assigned trainer's name pulled in via the
 // trainer_id foreign key.
@@ -43,7 +44,12 @@ function formatTime(timeStr: string): string {
   return timeStr.slice(0, 5);
 }
 
-export default async function AdminPage() {
+export default async function AdminPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ opprettet?: string; feil?: string }>;
+}) {
+  const { opprettet, feil } = await searchParams;
   const supabase = await createClient();
 
   // Who's logged in? (Middleware guaranteed there IS someone.)
@@ -77,6 +83,15 @@ export default async function AdminPage() {
     .order("start_date", { ascending: false });
 
   const courses = (data ?? []) as unknown as Course[];
+  // All trainers, for the dropdown. Admins can read every profile,
+  // so this returns the whole staff list.
+  const { data: trainersData } = await supabase
+    .from("profiles")
+    .select("id, full_name, email")
+    .eq("role", "trainer")
+    .order("full_name", { ascending: true });
+
+  const trainers = trainersData ?? [];
 
   return (
     <main className="mx-auto max-w-3xl px-4 py-10">
@@ -93,6 +108,24 @@ export default async function AdminPage() {
           Logg ut
         </button>
       </form>
+
+
+      {/* Feedback after creating a course */}
+      {opprettet && (
+        <p className="mt-6 rounded-lg bg-green-50 p-3 text-sm text-green-800">
+          Kurset ble opprettet.
+        </p>
+      )}
+      {feil && (
+        <p className="mt-6 rounded-lg bg-red-50 p-3 text-sm text-red-700">
+          Kunne ikke opprette kurset: {feil}
+        </p>
+      )}
+
+      {/* Create a new course */}
+      <h2 className="mt-10 text-xl font-semibold text-gray-900">Nytt kurs</h2>
+      <NyttKursSkjema trainers={trainers} />
+
 
       <h2 className="mt-10 text-xl font-semibold text-gray-900">Alle kurs</h2>
 
