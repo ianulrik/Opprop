@@ -83,9 +83,6 @@ export default async function TrenerPage() {
       <h1 className="text-3xl font-bold text-gray-900">Mine kurs</h1>
       <p className="mt-2 text-gray-600">
         Logget inn som {profile?.full_name || user.email}
-        {/* Temporary: show the role so we can see the check works.
-            Later this drives the admin redirect instead. */}
-        {profile?.role === "admin" && " (administrator)"}
       </p>
 
         {/* Logout. A tiny form that POSTs to the logout route. Using a form
