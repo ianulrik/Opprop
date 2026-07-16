@@ -61,10 +61,10 @@ export default async function TrenerPage() {
     .eq("id", user.id)
     .single();
 
-  // NOTE: once /admin exists, we'll redirect admins there:
-  //   if (profile?.role === "admin") redirect("/admin");
-  // For now /admin doesn't exist, so redirecting would land on a 404.
-  // Instead we just show the role below, and wire up the redirect later.
+   // Admins get redirected to the admin page and not trainers page
+  if (profile?.role === "admin") {
+    return redirect("/admin");
+  }
 
   // 3. This trainer's active courses. This is a plain select — your RLS
   //    policies make sure a trainer only sees their OWN courses, and an
