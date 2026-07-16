@@ -5,7 +5,7 @@
 // the real protection is RLS in the database. A trainer who somehow
 // reached this page would simply see their own courses, not everyone's.
 
-import Link from "next/link";
+
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import NyttKursSkjema from "./NyttKursSkjema";
