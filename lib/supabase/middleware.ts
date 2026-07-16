@@ -52,17 +52,22 @@ export async function updateSession(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser();
 
-  // Guard the /trener area. If the request is for a /trener page and
-  // there's no logged-in user, send them to the login page.
+  // Guard the logged-in areas. If the request is for a /trener or /admin
+  // page and there's no logged-in user, send them to the login page.
+  //
+  // NOTE: this only checks "are you logged in?" — not WHICH role you have.
+  // The role check (admin vs trainer) lives on the pages themselves, where
+  // we have proper database access. See /admin/page.tsx.
   //
   // We explicitly EXEMPT /trener/login itself — otherwise a logged-out
   // visitor to the login page would be redirected to... the login page,
   // over and over (an infinite loop).
   const path = request.nextUrl.pathname;
-  const isTrenerArea = path.startsWith("/trener");
+  const isProtectedArea =
+    path.startsWith("/trener") || path.startsWith("/admin");
   const isLoginPage = path === "/trener/login";
 
-  if (isTrenerArea && !isLoginPage && !user) {
+  if (isProtectedArea && !isLoginPage && !user) {
     const url = request.nextUrl.clone();
     url.pathname = "/trener/login";
     return NextResponse.redirect(url);
