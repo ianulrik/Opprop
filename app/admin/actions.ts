@@ -67,3 +67,42 @@ export async function createCourse(formData: FormData) {
   revalidatePath("/admin");
   redirect("/admin?opprettet=1");
 }
+
+// Assign or change a course's trainer.
+//
+// Same shape as createCourse: re-check the role here, because a Server
+// Action is a public endpoint regardless of who sees the form.
+export async function updateCourseTrainer(formData: FormData) {
+  const supabase = await createClient();
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return redirect("/trener/login");
+
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("role")
+    .eq("id", user.id)
+    .single();
+
+  if (profile?.role !== "admin") {
+    return redirect("/trener");
+  }
+
+  const courseId = formData.get("course_id") as string;
+  const trainerId = formData.get("trainer_id") as string;
+
+  const { error } = await supabase
+    .from("courses")
+    // Empty selection means "remove the trainer" -> null.
+    .update({ trainer_id: trainerId || null })
+    .eq("id", courseId);
+
+  if (error) {
+    return redirect(`/admin?feil=${encodeURIComponent(error.message)}`);
+  }
+
+  revalidatePath("/admin");
+  redirect("/admin?oppdatert=1");
+}
