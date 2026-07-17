@@ -49,9 +49,9 @@ function formatTime(timeStr: string): string {
 export default async function AdminPage({
   searchParams,
 }: {
-  searchParams: Promise<{ opprettet?: string; feil?: string }>;
+  searchParams: Promise<{ opprettet?: string; oppdatert?: string; feil?: string }>;
 }) {
-  const { opprettet, feil } = await searchParams;
+  const { opprettet, oppdatert, feil } = await searchParams;
   const supabase = await createClient();
 
   // Who's logged in? (Middleware guaranteed there IS someone.)
@@ -80,7 +80,7 @@ export default async function AdminPage({
   const { data, error } = await supabase
     .from("courses")
     .select(
-      "id, name, location, start_date, start_time, max_participants, archived, profiles ( full_name )"
+      "id, name, location, start_date, start_time, max_participants, archived, trainer_id, profiles ( full_name )"
     )
     .order("start_date", { ascending: false });
 
@@ -116,6 +116,11 @@ export default async function AdminPage({
       {opprettet && (
         <p className="mt-6 rounded-lg bg-green-50 p-3 text-sm text-green-800">
           Kurset ble opprettet.
+        </p>
+      )}
+      {oppdatert && (
+        <p className="mt-6 rounded-lg bg-green-50 p-3 text-sm text-green-800">
+          Treneren ble oppdatert.
         </p>
       )}
       {feil && (
