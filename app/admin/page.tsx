@@ -9,6 +9,7 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import NyttKursSkjema from "./NyttKursSkjema";
+import { updateCourseTrainer } from "./actions";
 
 // One course row, with the assigned trainer's name pulled in via the
 // trainer_id foreign key.
@@ -20,6 +21,7 @@ type Course = {
   start_time: string;
   max_participants: number;
   archived: boolean;
+  trainer_id: string | null; 
   profiles: { full_name: string | null } | null;
 };
 
@@ -170,19 +172,39 @@ export default async function AdminPage({
                   </p>
                 </div>
 
-                {/* Assigned trainer, or a clear warning when missing */}
-                <div className="text-right">
-                  <p className="text-xs uppercase tracking-wide text-gray-400">
+                {/* Assign or change the trainer. A small form per course,
+                    posting to the updateCourseTrainer action. The hidden
+                    field tells the action WHICH course this is. */}
+                <form action={updateCourseTrainer} className="text-right">
+                  <input type="hidden" name="course_id" value={course.id} />
+
+                  <label className="block text-xs uppercase tracking-wide text-gray-400">
                     Trener
-                  </p>
-                  {course.profiles?.full_name ? (
-                    <p className="text-sm text-gray-900">
-                      {course.profiles.full_name}
-                    </p>
-                  ) : (
-                    <p className="text-sm text-amber-700">Ikke tildelt</p>
-                  )}
-                </div>
+                  </label>
+
+                  <select
+                    name="trainer_id"
+                    // defaultValue (not value) so the dropdown starts on the
+                    // current trainer but the admin can freely change it.
+                    defaultValue={course.trainer_id ?? ""}
+                    className="mt-1 rounded-lg border border-gray-300 p-2 text-sm"
+                  >
+                    <option value="">Ikke tildelt</option>
+                    {trainers.map((t) => (
+                      <option key={t.id} value={t.id}>
+                        {t.full_name || t.email || "Uten navn"}
+                      </option>
+                    ))}
+                  </select>
+
+                  <button
+                    type="submit"
+                    className="mt-2 block w-full rounded-lg bg-gray-100 px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-200"
+                  >
+                    Lagre
+                  </button>
+                </form>
+
               </div>
             </li>
           ))}
