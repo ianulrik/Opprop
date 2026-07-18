@@ -48,7 +48,7 @@ export async function GET(
   // The course (for the filename and a sanity check via RLS).
   const { data: course } = await supabase
     .from("courses")
-    .select("id, name")
+    .select("id, name, start_date")
     .eq("id", courseId)
     .single();
 
@@ -138,12 +138,13 @@ export async function GET(
 
   // Build a safe filename from the course name.
   const safeName = course.name.replace(/[^a-z0-9æøå]/gi, "_").toLowerCase();
+  const filename = `deltakerliste_${safeName}_${course.start_date}.csv`;
 
   return new NextResponse(csv, {
     headers: {
       "Content-Type": "text/csv; charset=utf-8",
       // "attachment" makes the browser download rather than display it.
-      "Content-Disposition": `attachment; filename="deltakerliste_${safeName}.csv"`,
+      "Content-Disposition": `attachment; filename="${filename}"`,
     },
   });
 }
