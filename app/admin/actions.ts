@@ -150,3 +150,45 @@ export async function copyCourse(formData: FormData) {
   revalidatePath("/admin");
   redirect("/admin?kopiert=1");
 }
+
+
+
+// Archive or un-archive a course. Archiving doesn't delete anything —
+// it just hides the course from public registration and the trainer
+// dashboard (both filter on archived = false). The data stays intact.
+//
+// This is a toggle: we receive the desired new value and set it.
+export async function setCourseArchived(formData: FormData) {
+  const supabase = await createClient();
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return redirect("/trener/login");
+
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("role")
+    .eq("id", user.id)
+    .single();
+
+  if (profile?.role !== "admin") {
+    return redirect("/trener");
+  }
+
+  const courseId = formData.get("course_id") as string;
+  // The form sends the desired new state as the string "true"/"false".
+  const archived = formData.get("archived") === "true";
+
+  const { error } = await supabase
+    .from("courses")
+    .update({ archived })
+    .eq("id", courseId);
+
+  if (error) {
+    return redirect(`/admin?feil=${encodeURIComponent(error.message)}`);
+  }
+
+  revalidatePath("/admin");
+  redirect("/admin?arkiv=1");
+}

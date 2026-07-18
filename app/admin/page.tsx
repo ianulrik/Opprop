@@ -9,7 +9,7 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import NyttKursSkjema from "./NyttKursSkjema";
-import { updateCourseTrainer, copyCourse } from "./actions";
+import { updateCourseTrainer, copyCourse, setCourseArchived } from "./actions";
 
 
 // One course row, with the assigned trainer's name pulled in via the
@@ -54,9 +54,10 @@ export default async function AdminPage({
     opprettet?: string;
     oppdatert?: string;
     kopiert?: string;
+    arkiv?: string;
     feil?: string }>;
 }) {
-  const { opprettet, oppdatert, kopiert, feil } = await searchParams;
+  const { opprettet, oppdatert, kopiert, arkiv, feil } = await searchParams;
   const supabase = await createClient();
 
   // Who's logged in? (Middleware guaranteed there IS someone.)
@@ -131,6 +132,11 @@ export default async function AdminPage({
       {kopiert && (
         <p className="mt-6 rounded-lg bg-green-50 p-3 text-sm text-green-800">
           Kurset ble kopiert til ny termin.
+        </p>
+      )}
+      {arkiv && (
+        <p className="mt-6 rounded-lg bg-green-50 p-3 text-sm text-green-800">
+          Kursets arkivstatus ble oppdatert.
         </p>
       )}
       {feil && (
@@ -270,6 +276,28 @@ export default async function AdminPage({
                   </button>
                 </form>
               </details>
+
+              {/* Archive / un-archive. The hidden field sends the OPPOSITE
+                  of the current state, so one button toggles both ways. */}
+              <form action={setCourseArchived} className="mt-3">
+                <input type="hidden" name="course_id" value={course.id} />
+                <input
+                  type="hidden"
+                  name="archived"
+                  value={course.archived ? "false" : "true"}
+                />
+                <button
+                  type="submit"
+                  className={
+                    course.archived
+                      ? "text-sm font-medium text-blue-600 hover:underline"
+                      : "text-sm font-medium text-amber-700 hover:underline"
+                  }
+                >
+                  {course.archived ? "Hent frem igjen" : "Arkiver kurs"}
+                </button>
+              </form>
+
             </li>
           ))}
         </ul>
