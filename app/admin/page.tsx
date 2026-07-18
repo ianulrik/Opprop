@@ -9,7 +9,8 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import NyttKursSkjema from "./NyttKursSkjema";
-import { updateCourseTrainer } from "./actions";
+import { updateCourseTrainer, copyCourse } from "./actions";
+
 
 // One course row, with the assigned trainer's name pulled in via the
 // trainer_id foreign key.
@@ -49,9 +50,13 @@ function formatTime(timeStr: string): string {
 export default async function AdminPage({
   searchParams,
 }: {
-  searchParams: Promise<{ opprettet?: string; oppdatert?: string; feil?: string }>;
+  searchParams: Promise<{ 
+    opprettet?: string;
+    oppdatert?: string;
+    kopiert?: string;
+    feil?: string }>;
 }) {
-  const { opprettet, oppdatert, feil } = await searchParams;
+  const { opprettet, oppdatert, kopiert, feil } = await searchParams;
   const supabase = await createClient();
 
   // Who's logged in? (Middleware guaranteed there IS someone.)
@@ -121,6 +126,11 @@ export default async function AdminPage({
       {oppdatert && (
         <p className="mt-6 rounded-lg bg-green-50 p-3 text-sm text-green-800">
           Treneren ble oppdatert.
+        </p>
+      )}
+      {kopiert && (
+        <p className="mt-6 rounded-lg bg-green-50 p-3 text-sm text-green-800">
+          Kurset ble kopiert til ny termin.
         </p>
       )}
       {feil && (
@@ -211,6 +221,55 @@ export default async function AdminPage({
                 </form>
 
               </div>
+
+
+              {/* kopiereing av kurs */}
+              <details className="mt-4 border-t border-gray-100 pt-4">
+                <summary className="cursor-pointer text-sm font-medium text-gray-700">
+                  Kopier til ny termin
+                </summary>
+
+                <form action={copyCourse} className="mt-3 space-y-3">
+                  <input type="hidden" name="source_id" value={course.id} />
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-900">
+                      Ny startdato
+                    </label>
+                    <input
+                      type="date"
+                      name="new_start_date"
+                      required
+                      className="mt-1 rounded-lg border border-gray-300 p-2 text-sm"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-900">
+                      Trener
+                    </label>
+                    <select
+                      name="trainer_id"
+                      defaultValue=""
+                      className="mt-1 rounded-lg border border-gray-300 p-2 text-sm"
+                    >
+                      <option value="">Behold samme trener</option>
+                      {trainers.map((t) => (
+                        <option key={t.id} value={t.id}>
+                          {t.full_name || t.email || "Uten navn"}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <button
+                    type="submit"
+                    className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
+                  >
+                    Kopier kurs
+                  </button>
+                </form>
+              </details>
             </li>
           ))}
         </ul>

@@ -106,3 +106,47 @@ export async function updateCourseTrainer(formData: FormData) {
   revalidatePath("/admin");
   redirect("/admin?oppdatert=1");
 }
+
+
+// Copy a course into a new term. The copy_course RPC does the real work:
+// it clones the course with a new start date, and the session-generating
+// trigger creates its 10 sessions automatically.
+//
+// If p_trainer_id is null, the RPC keeps the source course's trainer.
+export async function copyCourse(formData: FormData) {
+  const supabase = await createClient();
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return redirect("/trener/login");
+
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("role")
+    .eq("id", user.id)
+    .single();
+
+  if (profile?.role !== "admin") {
+    return redirect("/trener");
+  }
+
+  const sourceId = formData.get("source_id") as string;
+  const newStartDate = formData.get("new_start_date") as string;
+  const trainerId = formData.get("trainer_id") as string;
+
+  // Call the RPC. The keys must match the p_* parameter names exactly.
+  const { error } = await supabase.rpc("copy_course", {
+    p_source_id: sourceId,
+    p_new_start_date: newStartDate,
+    // Empty selection -> null -> RPC keeps the source course's trainer.
+    p_trainer_id: trainerId || null,
+  });
+
+  if (error) {
+    return redirect(`/admin?feil=${encodeURIComponent(error.message)}`);
+  }
+
+  revalidatePath("/admin");
+  redirect("/admin?kopiert=1");
+}
