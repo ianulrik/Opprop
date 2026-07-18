@@ -49,9 +49,13 @@ function formatTime(timeStr: string): string {
 export default async function AdminPage({
   searchParams,
 }: {
-  searchParams: Promise<{ opprettet?: string; oppdatert?: string; feil?: string }>;
+  searchParams: Promise<{ 
+    opprettet?: string;
+    oppdatert?: string;
+    kopiert?: string;
+    feil?: string }>;
 }) {
-  const { opprettet, oppdatert, feil } = await searchParams;
+  const { opprettet, oppdatert, kopiert, feil } = await searchParams;
   const supabase = await createClient();
 
   // Who's logged in? (Middleware guaranteed there IS someone.)
@@ -121,6 +125,11 @@ export default async function AdminPage({
       {oppdatert && (
         <p className="mt-6 rounded-lg bg-green-50 p-3 text-sm text-green-800">
           Treneren ble oppdatert.
+        </p>
+      )}
+      {kopiert && (
+        <p className="mt-6 rounded-lg bg-green-50 p-3 text-sm text-green-800">
+          Kurset ble kopiert til ny termin.
         </p>
       )}
       {feil && (
