@@ -298,6 +298,15 @@ export default async function AdminPage({
                 </button>
               </form>
 
+              {/* Download participant list as CSV. A plain link to the
+                  export route; the browser downloads the file. */}
+              
+              <a  href={`/admin/kurs/${course.id}/eksport`}
+                className="mt-3 inline-block text-sm font-medium text-blue-600 hover:underline"
+              >
+                Last ned deltakerliste (CSV)
+              </a>
+
             </li>
           ))}
         </ul>
