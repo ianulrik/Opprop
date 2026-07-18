@@ -9,8 +9,8 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import NyttKursSkjema from "./NyttKursSkjema";
-import { updateCourseTrainer } from "./actions";
 import { updateCourseTrainer, copyCourse } from "./actions";
+
 
 // One course row, with the assigned trainer's name pulled in via the
 // trainer_id foreign key.
