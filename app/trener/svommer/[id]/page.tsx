@@ -9,6 +9,7 @@ import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import TilbakeKnapp from "./tilbakeknapp";
+import NotatRedigering from "./notatredigering";
 
 // --- Types for the data we fetch ---
 
@@ -236,9 +237,7 @@ export default async function SvommerPage({
         <h2 className="text-sm font-semibold uppercase tracking-wide text-gray-500">
           Notater
         </h2>
-        <p className="mt-1 whitespace-pre-wrap text-gray-900">
-          {s.notes || "Ingen notater"}
-        </p>
+        <NotatRedigering swimmerId={s.id} initialNotes={s.notes} />
       </section>
 
       {/* GDPR */}
