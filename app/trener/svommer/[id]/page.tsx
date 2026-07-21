@@ -206,7 +206,7 @@ export default async function SvommerPage({
         )}
       </section>
 
-      {/* Badges */}
+      {/* Merker */}
       <section className="mt-6">
         <h2 className="text-sm font-semibold uppercase tracking-wide text-gray-500">
           Merker
